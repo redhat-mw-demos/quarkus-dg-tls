@@ -1,4 +1,4 @@
-# Quarkus demo: Infinispan Client
+# Red Hat Data Grid and Quarkus
 
 This example showcases how to use the Infinispan client with Quarkus and Red Hat Data Grid, and using Data Grid's new autoscaling feature.
 
