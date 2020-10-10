@@ -6,9 +6,13 @@ This example showcases how to use the Infinispan client with Quarkus and Red Hat
 
 To run this demo, you'll need an OpenShift 4.x cluster available, and have `cluster-admin` privileges to be able to install Operators.
 
+## Create a Namespace/Project
+
+From the _Administrator_ perspective in OpenShift, select _Home_ > _Projects_ and click _Create Project_. Select a name (such as `dgdemo`) and optionally a Display Name or Description and then click _Create_.
+
 ## Install the Red Hat Data Grid Operator
 
-Create a new namespace/project in OpenShift, then head over to _Operators > OperatorHub_ and install the _Red Hat Data Grid_ operator into the namespace. Accept the defaults.
+Head over to _Operators > OperatorHub_ and install the _Red Hat Data Grid_ operator into the namespace. Accept the defaults.
 
 ## Create a Data Grid Cluster
 
@@ -40,7 +44,7 @@ Click _Create_. This will spin up a new cluster called `example-infinispan`.
 
 ## Get the password
 
-Using the _oc_ command line, login with `oc login` and then switch to your demo project e.g. `oc project dgdemo`. Then, you'll need to extract the pre-generated passwors with:
+Using the _oc_ command line, login with `oc login` and then switch to your demo project e.g. `oc project dgdemo`. Then, you'll need to extract the pre-generated passwords with:
 
 ```sh
 $ oc get secret/example-infinispan-generated-secret -o template='{{index .data "identities.yaml"}}' | openssl base64 -d -A
@@ -91,7 +95,7 @@ If you visit that URL in your browser you can access the admin console - You'll 
 To test the scaling capability, run the following _curl_ to hit the `/infinispan/fill` endpoint, which as you can see in `InfinispanGreetingResource.java` will just add a bunch of junk, 2MB of it every 2 seconds.
 
 ```sh
-curl http://$(oc get route/infinispan-client-quickstart -o jsonpath='{.spec.host}')/infinispan/fill
+curl -X POST http://$(oc get route/infinispan-client-quickstart -o jsonpath='{.spec.host}')/infinispan/fill
 ```
 
 After 20-30 seconds, you should see Data Grid start adding cluster nodes.
@@ -101,14 +105,14 @@ After 20-30 seconds, you should see Data Grid start adding cluster nodes.
 After a minute or so, you can stop (and clear) the grid with:
 
 ```sh
-curl http://$(oc get route/infinispan-client-quickstart -o jsonpath='{.spec.host}')/infinispan/clear
+curl -X POST http://$(oc get route/infinispan-client-quickstart -o jsonpath='{.spec.host}')/infinispan/clear
 ```
 
 Data Grid should then start to scale back down.
 
 ## Use Prometheus/Grafana
 
-If you want to use these, the easiest way is to install their respective container images. From the _Administrator_ perspective in OpenShift, navigate to _Add > From Container Image_, and install both the `grafana/grafana:latest` and `prom/prometheus:latest`.
+If you want to use these, the easiest way is to install their respective container images. From the _Developer_ perspective in OpenShift, navigate to _Add > From Container Image_, and install both the `grafana/grafana:latest` and `prom/prometheus:latest`.
 
 After deploying both, you'll need to ensure the DG password is set in the `prometheus.yml` file in this repo, and then mount it in the prometheus deployment pod with:
 
